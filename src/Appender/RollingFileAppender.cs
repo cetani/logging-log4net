@@ -1298,9 +1298,11 @@ namespace log4net.Appender
 					        {
 					            String archivePath = ( $"{System.IO.Path.GetDirectoryName( toFile )}" );
 					            LogLog.Debug( declaringType, $"Archiving {toFile} to {toZipFileName}." );
-					            archive.CreateEntryFromFile( toFile, toZipFileName, CompressionLevel.Fastest );
+					            archive.CreateEntryFromFile( toFile, toFile, CompressionLevel.Optimal );
 					        }
 					    }
+
+					    System.IO.File.WriteAllText( toFile, String.Empty );
 					}
 				}
 				catch(Exception moveEx)
