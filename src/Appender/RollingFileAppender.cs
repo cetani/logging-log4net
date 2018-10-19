@@ -1297,9 +1297,8 @@ namespace log4net.Appender
 					            System.IO.Compression.ZipFile.Open( toZipFileName, ZipArchiveMode.Create ) )
 					        {
 					            String archivePath = ( $"{System.IO.Path.GetDirectoryName( toFile )}" );
-					            //archive.CreateEntryFromFile( toFile, toZipFileName );
-					            archive.CreateEntryFromFile( toFile, toZipFileName, CompressionLevel.Fastest );
 					            LogLog.Debug( declaringType, $"Archiving {toFile} to {toZipFileName}." );
+					            archive.CreateEntryFromFile( toFile, toZipFileName, CompressionLevel.Fastest );
 					        }
 					    }
 					}
