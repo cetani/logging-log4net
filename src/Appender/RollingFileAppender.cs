@@ -21,7 +21,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
-
+using System.IO.Compression;
 using log4net.Util;
 using log4net.Core;
 using System.Threading;
@@ -1273,8 +1273,12 @@ namespace log4net.Appender
 		{
 			if (FileExists(fromFile))
 			{
+
+			    String toZipFileName = ( toFile + ".zip" );
+			    String fromZipFileName = ( fromFile + ".zip" );
 				// Delete the toFile if it exists
 				DeleteFile(toFile);
+			    DeleteFile( toZipFileName );
 
 				// We may not have permission to move the file, or the file may be locked
 				try
@@ -1283,6 +1287,22 @@ namespace log4net.Appender
 					using(SecurityContext.Impersonate(this))
 					{
 						System.IO.File.Move(fromFile, toFile);
+					    if ( FileExists( fromZipFileName ) )
+					    {
+					        System.IO.File.Move( fromZipFileName, toZipFileName );
+					    }
+					    else
+					    {
+					        using ( System.IO.Compression.ZipArchive archive =
+					            System.IO.Compression.ZipFile.Open( toZipFileName, ZipArchiveMode.Create ) )
+					        {
+					            String archivePath = ( $"{System.IO.Path.GetDirectoryName( toFile )}" );
+					            LogLog.Debug( declaringType, $"Archiving {toFile} to {toZipFileName}." );
+					            archive.CreateEntryFromFile( toFile, toFile, CompressionLevel.Optimal );
+					        }
+					    }
+
+					    System.IO.File.WriteAllText( toFile, String.Empty );
 					}
 				}
 				catch(Exception moveEx)
